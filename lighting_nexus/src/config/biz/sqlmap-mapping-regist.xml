@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="lighting">
+<typeAlias alias="UserBasicInfoDto" type="com.lighting.front.dto.userManager.UserBasicInfosDTO"></typeAlias>
+	<!-- 会员注册 -->
+    <insert id="light-regist" parameterClass="java.util.HashMap"> 
+       INSERT INTO l_user_info_tab (
+		       	userId,
+		       	email,
+		       	password,
+		       	status,
+		       	usertype,
+		       	deviceId,
+		       	token,
+		       	datecreate,
+		       	dateupdate
+       ) VALUES(
+				#userId#,
+				#email#,
+				#password#,
+				#status#,
+				#usertype#,
+				#deviceId#,
+				#token#,
+				now(),
+				now()
+	  )
+	</insert>
+	
+	<!-- 会员注册激活码存储  -->
+    <insert id="light-regist-key-insert" parameterClass="java.util.HashMap"> 
+       INSERT INTO l_key_info_tab (
+		       	id,
+		       	email,
+		       	keyvalue,
+		       	status,
+		       	datecreate,
+		       	dateupdate
+       ) VALUES (
+				#id#,
+				#email#,
+				#keyvalue#,
+				#status#,
+				now(),
+				now()
+	  )
+	</insert>
+	
+	<!-- 根据email查询用户 -->
+	<select id="query-by-email" parameterClass="java.lang.String" resultClass="java.util.HashMap">
+	    SELECT email FROM l_user_info_tab WHERE email=#email#
+	</select>
+	
+	<!-- 查询激活key -->
+	<select id="query-by-key" parameterClass="java.lang.String" resultClass="java.util.HashMap">
+	    SELECT keyvalue FROM l_key_info_tab WHERE keyvalue=#key#
+	</select>
+	
+	<!-- 注册key激活 -->
+	<insert id="regist-key-jihuo" parameterClass="java.lang.String">
+		UPDATE l_key_info_tab SET status='1' WHERE keyvalue=#key# 
+	</insert>
+	
+	<!-- 注册激活 -->
+	<insert id="regist-jihuo" parameterClass="java.lang.String">
+		UPDATE l_user_info_tab SET status='1' WHERE email=(SELECT email FROM l_key_info_tab WHERE keyvalue=#key#) 
+	</insert>
+	
+	<!-- 根据用户名和密码查询记录  -->
+	<select id="query-by-nameandpsw" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+	    SELECT password FROM l_user_info_tab WHERE email=#email# AND password=#password#
+	</select>
+	
+	<!-- 查询注册人数 
+	<select id="query-registed-user-count" resultClass="java.lang.Integer">
+		SELECT COUNT(name) FROM hm_user_infos_tab  ;
+	</select>
+	 -->
+	  <!-- 更新账户信息  
+    <update id="hm-update-acount" parameterClass="java.util.Map">
+  	 UPDATE hm_account_infos_tab a
+	 set 
+	 <![CDATA[
+		a.Acct_total = (#payBalance# + a.Acct_total),
+		a.Acct_balance = (-1 * #payBalance1# + a.Acct_balance ),
+		a.Pay_balance = (#payBalance2# + a.Pay_balance),
+		a.Future_income = ( #futureIncome# + a.Future_income) ,
+		a.Once_income = ( #onceIncome# + a.Once_income) ,
+	  ]]>
+		a.Date_update= NOW()
+	 where 
+ 		a.Acct_num= #accountNum# 
+     </update>
+     --> 
+</sqlMap>

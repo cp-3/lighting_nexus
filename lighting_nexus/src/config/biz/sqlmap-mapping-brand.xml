@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="lighting">
+
+	<typeAlias alias="brandInfoDTO" type="com.lighting.front.dto.BrandInfoDTO"></typeAlias>
+	<!-- 查询品牌信息列表    -->
+	<select id="get-all-brand-info" parameterClass="java.lang.String" resultClass="brandInfoDTO">
+		SELECT 
+			s.brandId,
+			s.brandName,
+			s.belongAddr,
+			s.address,
+			s.brandAllName,
+			s.telephone,
+			s.fax,
+			s.linkMan,
+			s.email,
+			s.webSite,
+			s.weChat,
+			s.warrPeriod,
+			s.description,
+			s.dateCreate,
+			s.dateUpdate
+		 FROM  l_brand_info_tab s
+	</select>
+	
+	<!-- 查询品牌信息    -->
+	<select id="get-brand-info" parameterClass="java.lang.String" resultClass="brandInfoDTO">
+		SELECT 
+			s.brandId,
+			s.brandName,
+			s.belongAddr,
+			s.address,
+			s.brandAllName,
+			s.telephone,
+			s.fax,
+			s.linkMan,
+			s.email,
+			s.webSite,
+			s.weChat,
+			s.warrPeriod,
+			s.description,
+			s.dateCreate,
+			s.dateUpdate
+		 FROM  l_brand_info_tab s 
+		 WHERE s.brandId=#brandId#
+	</select>
+	
+	<!-- 新增品牌信息 -->
+    <insert id="add-brand-info" parameterClass="brandInfoDTO"> 
+       INSERT INTO l_brand_info_tab (
+		    brandId,
+			brandName,
+			belongAddr,
+			address,
+			brandAllName,
+			telephone,
+			fax,
+			linkMan,
+			email,
+			webSite,
+			weChat,
+			warrPeriod,
+			description,
+			dateCreate,
+			dateUpdate
+       ) VALUES(
+				#brandId#,
+				#brandName#,
+				#belongAddr#,
+				#address#,
+				#brandAllName#,
+				#telephone#,
+				#fax#,
+				#linkMan#,
+				#email#,
+				#webSite#,
+				#weChat#,
+				#warrPeriod#,
+				#description#,
+				now(),
+				now()
+	  )
+	</insert>
+	
+	<!-- 编辑品牌信息  -->
+    <update id="update-brand-info" parameterClass="brandInfoDTO">
+  		 update l_brand_info_tab a
+		    <dynamic prepend="set">  
+				<isNotNull prepend="," property="brandName">brandName= #brandName: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="belongAddr">belongAddr= #belongAddr: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="address">address= #address: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="brandAllName">brandAllName= #brandAllName: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="telephone">telephone= #telephone: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="fax">fax= #fax: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="linkMan">linkMan= #linkMan: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="email">email= #email: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="webSite">webSite= #webSite: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="weChat">weChat= #weChat: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="warrPeriod">warrPeriod= #warrPeriod: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="description">description= #description: VARCHAR#</isNotNull>
+		    </dynamic> 
+		,dateUpdate=now()
+	    where a.brandId = #brandId#
+     </update>
+</sqlMap>

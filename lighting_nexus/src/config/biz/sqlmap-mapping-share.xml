@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="lighting">
+
+	<typeAlias alias="shareInfoDTO" type="com.lighting.front.dto.ShareInfoDTO"></typeAlias>
+	<typeAlias alias="shareDownloadRecordInfoDTO" type="com.lighting.front.dto.ShareDownloadRecordInfoDTO"></typeAlias>
+	
+	<!-- 查询分享码    -->
+	<select id="select-share-code" parameterClass="java.lang.String" resultClass="java.lang.String">
+		SELECT id FROM l_collect_share_code_tab WHERE id=#id#
+	</select>
+	
+	<!-- 新增分享信息 -->
+    <insert id="add-share-code-info" parameterClass="shareInfoDTO"> 
+       INSERT INTO l_collect_share_code_tab (
+		    id,
+			userId,
+			collectIds,
+			shareCode,
+			state,
+			dateCreate,
+			dateUpdate
+       ) VALUES(
+				#id#,
+				#userId#,
+				#collectIds#,
+				#shareCode#,
+				#state#,
+				now(),
+				now()
+	  )
+	</insert>
+	
+	<!-- 查询分享信息    -->
+	<select id="qry-share-info" parameterClass="shareInfoDTO" resultClass="shareInfoDTO">
+		SELECT  
+			id,
+			userId,
+			collectIds,
+			shareCode,
+			state
+		FROM l_collect_share_code_tab 
+		WHERE shareCode=#shareCode# AND state=#state#
+	</select>
+	
+	<!-- 取消分享信息  -->
+    <update id="cancel-share-info" parameterClass="shareInfoDTO">
+  		 update l_collect_share_code_tab set state=#state#,dateUpdate=now() where shareCode=#shareCode# and userId=#userId#;
+    </update>
+    
+    <!-- 新分享下载记录信息 -->
+    <insert id="add-share-download-record" parameterClass="java.util.HashMap"> 
+       INSERT INTO l_share_download_record_tab (
+		    id,
+		    userId,
+			userName,
+			shareCode,
+			dateCreate,
+			dateUpdate
+       ) VALUES(
+				#id#,
+				#userId#,
+				#userName#,
+				#shareCode#,
+				now(),
+				now()
+	  )
+	</insert>
+	
+	<!-- 查询分享下载记录信息数量    -->
+	<select id="qry-share-download-record-info" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		SELECT count(id) FROM l_share_download_record_tab WHERE shareCode=#shareCode# AND userId=#userId#
+	</select>
+	
+	<!-- 查询分享下载记录信息列表    -->
+	<select id="qry-share-download-record-infos" parameterClass="java.lang.String" resultClass="shareDownloadRecordInfoDTO">
+		SELECT id,userId,userName,shareCode
+		FROM l_share_download_record_tab 
+		WHERE shareCode in (SELECT shareCode FROM l_collect_share_code_tab WHERE userId=#userId#)
+	</select>
+	
+</sqlMap>

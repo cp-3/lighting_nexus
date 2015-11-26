@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="lighting">
+	<typeAlias alias="AccountDTO"  type="com.lighting.front.dto.account.AccountDTO"></typeAlias>
+	<!-- 会员注册 -->
+	<!-- 开立账户 -->
+    <insert id="hm-open-accout" parameterClass="java.util.HashMap"> 
+       INSERT INTO hm_account_infos_tab (
+		       	acct_num,
+		       	currency_type,
+		       	user_name,
+		       	acct_total,
+		       	acct_balance,
+		       	pay_balance,
+		       	future_income,
+		       	once_income,
+		       	date_create,
+		       	date_update
+       ) VALUES(
+				#acctNum#,
+				#currencyType#,
+				#username#,
+				#acctTotal#,
+				#acctBalance#,
+				#payBalance#,
+				#futureIncome#,
+				#onceIncome#,
+				now(),
+				now()
+	  )
+	</insert>
+	<!-- 开立子账户 -->
+	<insert id="hm-open-sub-account" parameterClass="java.util.HashMap"> 
+		 INSERT INTO hm_account_sub_infos_tab (
+		 father_acct_num,
+		 Subacct_num,
+		 Subacct_type,
+		 Subacct_balance,
+		 Date_create,
+		 Date_update
+		 )VALUES(
+		 #fatherAcctNum#,
+		 #subacctNum#,
+		 #subacctType#,
+		 #subacctBalance#,
+		 now(),
+		 now()
+		 )
+	</insert>
+	<!-- 根据用户名查询账户信息 -->
+	<select id="qry-user-account-infos"  parameterClass="java.util.Map"   resultClass="AccountDTO">
+		SELECT 
+			a.id id,
+			a.Acct_num acctNum,
+			a.Currency_type currencyType,
+			a.User_name userName,
+			a.Acct_total acctTotal,
+			a.Acct_balance acctBalance,
+			a.Pay_balance payBalance,
+			a.Future_income futureIncome,
+			a.Once_income onceIncome,
+			s.id sid,
+			s.Subacct_num SubacctNum,
+			s.father_acct_num fatherAcctNum,
+			s.Subacct_type SubacctType,
+			s.Subacct_balance SubacctBalance
+		FROM hm_account_infos_tab a 
+		  LEFT JOIN 
+		  hm_account_sub_infos_tab s
+		  on a.Acct_num = s.father_acct_num 
+		  where 
+		  a.User_name = #userName#
+	</select>
+	
+    <!-- 更新子账户信息  -->
+    <update id="hm-update-sub-acount" parameterClass="java.util.Map">
+  	 UPDATE hm_account_sub_infos_tab a
+		<![CDATA[
+		set a.Subacct_balance=(#changeBalance# + a.Subacct_balance ),
+		]]> 
+		a.Date_update= NOW()
+	 where 
+	 	a.father_acct_num=#accountNum# 
+		 and 
+	 	a.Subacct_num=#subAccount# 
+     </update>
+     
+    <!-- 更新账户信息  --> 
+    <update id="hm-update-acount" parameterClass="java.util.Map">
+  	 UPDATE hm_account_infos_tab a
+	 set 
+	 <![CDATA[
+		a.Acct_total = (#payBalance# + a.Acct_total),
+		a.Acct_balance = (-1 * #payBalance1# + a.Acct_balance ),
+		a.Pay_balance = (#payBalance2# + a.Pay_balance),
+		a.Future_income = ( #futureIncome# + a.Future_income) ,
+		a.Once_income = ( #onceIncome# + a.Once_income) ,
+	  ]]>
+		a.Date_update= NOW()
+	 where 
+ 		a.Acct_num= #accountNum# 
+     </update>
+    
+</sqlMap>
