@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<!-- 产品信息相关   -->
+<sqlMap namespace="lighting">
+	<typeAlias alias="productInfoDTO"  type="com.lighting.front.dto.ProductInfoDTO"></typeAlias>
+	<typeAlias alias="collectProductInfoDTO"  type="com.lighting.front.dto.CollectProductInfoDTO"></typeAlias>
+    
+	<!-- 新增产品信息 -->
+    <insert id="add-product-info" parameterClass="com.lighting.front.dto.ProductInfoDTO"> 
+       INSERT INTO l_product_info_tab (
+		    productId,
+			productName,
+			modelType,
+			installType,
+			functionType,
+			lightStrength,
+			lightSouType,
+			size,
+			power,
+			colorTemp,
+			showColAttr,
+			projectName,
+			brandName,
+			brandId,
+			address,
+			refPrice,
+			deliveryTime,
+			warrPeriod,
+			uniformity,
+			cutoffAngle,
+			remark,
+			appearanceImg,
+			sizeImg,
+			gradingImg,
+			backupImg,
+			dateCreate,
+			dateUpdate
+       ) VALUES(
+				#productId#,
+				#productName#,
+				#modelType#,
+				#installType#,
+				#functionType#,
+				#lightStrength#,
+				#lightSouType#,
+				#size#,
+				#power#,
+				#colorTemp#,
+				#showColAttr#,
+				#projectName#,
+				#brandName#,
+				#brandId#,
+				#address#,
+				#refPrice#,
+				#deliveryTime#,
+				#warrPeriod#,
+				#uniformity#,
+				#cutoffAngle#,
+				#remark#,
+				#appearanceImg:BLOB#,
+				#sizeImg:BLOB#,
+				#gradingImg:BLOB#,
+				#backupImg:BLOB#,
+				now(),
+				now()
+	  )
+	</insert>
+	
+	<!-- 编辑产品信息  -->
+    <update id="edit-product-info" parameterClass="java.util.Map">
+  		 update l_product_info_tab a
+		    <dynamic prepend="set">  
+				<isNotNull prepend="," property="productName">productName= #productName: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="modelType">modelType= #modelType: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="installType">installType= #installType: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="functionType">functionType= #functionType: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="lightStrength">lightStrength= #lightStrength: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="LightSouType">LightSouType= #LightSouType: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="size">size= #size: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="power">power= #power: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="colorTemp">colorTemp= #colorTemp: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="showColAttr">showColAttr=#showColAttr: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="projectName">projectName=#projectName: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="imageUrl">imageUrl=#imageUrl: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="brandName">brandName=#brandName: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="brandId">brandId= #brandId: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="address">address= #address: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="refPrice">refPrice= #refPrice: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="deliveryTime">remark= #deliveryTime: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="warrPeriod">remark= #warrPeriod: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="uniformity">remark= #uniformity: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="cutoffAngle">remark= #cutoffAngle: VARCHAR#</isNotNull>
+				<isNotNull prepend="," property="remark">remark= #remark: VARCHAR#</isNotNull>
+				<isNotNull prepend="" property="dateUpdate">dateUpdate=now()</isNotNull>  
+		    </dynamic> 
+	    where a.productId = #productId#
+     </update>
+	
+	<!-- 查询产品信息   -->
+	<select id="query-product-info" parameterClass="java.lang.String" resultClass="collectProductInfoDTO">
+		SELECT 
+			s.productId,
+			s.productName,
+			s.modelType,
+			s.installType,
+			s.functionType,
+			s.lightStrength,
+			s.lightSouType,
+			s.size,
+			s.power,
+			s.colorTemp,
+			s.showColAttr,
+			s.projectName,
+			s.imageUrl,
+			s.brandName,
+			s.brandId,
+			s.address,
+			s.refPrice,
+			s.deliveryTime,
+			s.warrPeriod,
+			s.uniformity,
+			s.cutoffAngle,
+			s.remark,
+			s.dateCreate,
+			s.dateUpdate
+		 FROM l_product_info_tab s
+		 WHERE productId=#productId#
+	</select>
+	
+	<!-- 查询所有产品列表    -->
+	<select id="get-all-product" parameterClass="java.lang.String" resultClass="productInfoDTO">
+		SELECT 
+			s.productId,
+			s.productName,
+			s.modelType,
+			s.installType,
+			s.functionType,
+			s.lightStrength,
+			s.lightSouType,
+			s.size,
+			s.power,
+			s.colorTemp,
+			s.showColAttr,
+			s.projectName,
+			s.imageUrl,
+			s.brandName,
+			s.brandId,
+			s.address,
+			s.refPrice,
+			s.deliveryTime,
+			s.warrPeriod,
+			s.uniformity,
+			s.cutoffAngle,
+			s.remark,
+			s.dateCreate,
+			s.dateUpdate
+		 FROM  l_product_info_tab s
+	</select>
+	
+	<!-- 记录访问信息 -->
+    <insert id="record-access-info" parameterClass="java.util.HashMap"> 
+       INSERT INTO l_product_access_tab (
+       		id,
+			userId,
+		    productId,
+			dateCreate,
+			dateUpdate
+       ) VALUES(
+			#id#,
+			#userId#,
+			#productId#,
+			now(),
+			now()
+	  )
+	</insert>
+</sqlMap>
